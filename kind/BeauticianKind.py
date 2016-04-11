@@ -1,9 +1,10 @@
+# coding: UTF-8
 
 from google.appengine.ext import ndb
-from kind import BaseKind
+from kind.BaseKind import BaseKind
 
 class BeauticianKind(BaseKind):
-    """美容師情報"""
+    u"""美容師情報"""
     email = ndb.StringProperty(index=True)                            #E mailアドレス
     nickName = ndb.StringProperty()                                   #ニックネーム
     gender = ndb.IntegerProperty()                                    #性別

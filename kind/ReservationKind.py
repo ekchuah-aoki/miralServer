@@ -1,9 +1,10 @@
+# coding: UTF-8
 
 from google.appengine.ext import ndb
-from kind import BaseKind
+from kind.BaseKind import BaseKind
 
 class ReservationKind(BaseKind):
-    """予約情報"""
+    u"""予約情報"""
     rsvSalonKey = ndb.KeyProperty(index=True,"kind=SalonKind")        #予約サロンKey
     rsvbeautiKey = ndb.KeyProperty(index=True,"kind=BeauticianKind")  #予約美容師Key
     apptDate = ndb.DateProperty()                                     #予約日

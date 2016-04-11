@@ -5,7 +5,7 @@ from kind.BaseKind  import BaseKind
 
 class MstTrainKind(BaseKind):
     u"""路線マスタ"""
-    trainCd = ndb.IntegerProperty(indexed=True)                         #路線コード
+    trainCd = ndb.IntegerProperty(indexed=True)                        #路線コード
     trainCompanyCd = ndb.IntegerProperty()                            #路線会社コード
     trainName   = ndb.StringProperty()                                #路線名
     trainNameKana = ndb.StringProperty()                              #路線名カナ

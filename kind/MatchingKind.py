@@ -1,9 +1,10 @@
+# coding: UTF-8
 
 from google.appengine.ext import ndb
-from kind import BaseKind
+from kind.BaseKind import BaseKind
 
 class MatchingKind(BaseKind):
-    """マッチング情報"""
+    u"""マッチング情報"""
     beautiKey = ndb.KeyProperty(index=True,"kind=BeauticianKind")     #美容師Key
     salonKey = ndb.KeyProperty(indexed=True)                          #サロンKey
     reqDirect = ndb.IntegerProperty()                                 #依頼方向

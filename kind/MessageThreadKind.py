@@ -1,9 +1,10 @@
+# coding: UTF-8
 
 from google.appengine.ext import ndb
-from kind import BaseKind
+from kind.BaseKind import BaseKind
 
 class MessageThreadKind(BaseKind):
-    """メッセージスレッド情報"""
+    u"""メッセージスレッド情報"""
     msgType = ndb.IntegerProperty()                                    #メッセージ種別
     caption = ndb.StringProperty()                                    #キャプション
     matchingKey = ndb.KeyProperty("kind=MatchingKind")                #マッチングキー

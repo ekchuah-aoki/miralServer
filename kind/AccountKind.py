@@ -1,9 +1,10 @@
+# coding: UTF-8
 
 from google.appengine.ext import ndb
-from kind import BaseKind
+from kind.BaseKind import BaseKind
 
 class AccountKind(BaseKind):
-    """アカウント情報"""
+    u"""アカウント情報"""
     email = ndb.StringProperty(index=True)                            #EMailアドレス
     acType = ndb.IntegerProperty()                                       #アカウント種別
     lastName = ndb.StringProperty()                                   #氏名(苗字)

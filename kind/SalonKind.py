@@ -1,9 +1,10 @@
+# coding: UTF-8
 
 from google.appengine.ext import ndb
-from kind import BaseKind
+from kind.BaseKind import BaseKind
 
 class SalonKind(BaseKind):
-    """サロン情報"""
+    u"""サロン情報"""
     accountKey = ndb.KeyProperty(index=True,"kind=AccountKind")       #アカウントKey
     name = ndb.StringProperty()                                       #店舗名
     nameKana = ndb.StringProperty()                                   #店舗名カナ

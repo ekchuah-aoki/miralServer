@@ -1,9 +1,10 @@
+# coding: UTF-8
 
 from google.appengine.ext import ndb
-from kind import BaseKind
+from kind.BaseKind import BaseKind
 
 class SalonExpendableKind(BaseKind):
-    """サロン消耗品"""
+    u"""サロン消耗品"""
     salonKey = ndb.KeyProperty(index=True,"Kind=SalonKind")           #サロンKey
     name = ndb.StringProperty()                                       #消耗品名
     displayOrder = ndb.IntegerProperty()                              #表示順
