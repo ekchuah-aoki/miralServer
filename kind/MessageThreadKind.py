@@ -4,6 +4,6 @@ from kind import BaseKind
 
 class MessageThreadKind(BaseKind):
     """メッセージスレッド情報"""
-    msgKnd = ndb.IntegerProperty()                                    #メッセージ種別
+    msgType = ndb.IntegerProperty()                                    #メッセージ種別
     caption = ndb.StringProperty()                                    #キャプション
     matchingKey = ndb.KeyProperty("kind=MatchingKind")                #マッチングキー
