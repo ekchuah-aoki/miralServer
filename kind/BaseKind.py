@@ -1,7 +1,8 @@
+# coding: UTF-8
 
 from google.appengine.ext import ndb
 class BaseKind(ndb.Model):
-    """ベース情報"""
+    u"""ベース情報"""
     regUserKey = ndb.KeyProperty(kind='MstAdminUserKind')        #登録者CD
     regDateTime = ndb.DateTimeProperty(auto_now_add=True)           #登録日時
     modUserKey = ndb.KeyProperty(kind='MstAdminUserKind')        #変更者CD
