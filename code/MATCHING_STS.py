@@ -1,7 +1,9 @@
+# coding: UTF-8
+
 import CodeValue
 
 class MATCHING_STS():
-    """アカウント種別"""
+    u"""マッチングステータス"""
     
     request =CodeValue(1, "依頼中")
     matching =CodeValue(2, "マッチング")

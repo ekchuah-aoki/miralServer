@@ -1,7 +1,9 @@
+# coding: UTF-8
+
 import CodeValue
 
 class PREFECTURE():
-    """アカウント種別"""
+    u"""都道府県"""
     
     hokkaidou =CodeValue(1, "  北海道")
     aomori =CodeValue(2, "青森")

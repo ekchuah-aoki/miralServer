@@ -1,7 +1,9 @@
+# coding: UTF-8
+
 import CodeValue
 
 class MSG_TYPE():
-    """アカウント種別"""
+    u"""メッセージ種類"""
     
     matching =CodeValue(1, "マッチング依頼")
     reservation =CodeValue(2, "予約")

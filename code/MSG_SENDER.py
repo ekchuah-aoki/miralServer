@@ -1,7 +1,9 @@
+# coding: UTF-8
+
 import CodeValue
 
 class MSG_SENDER():
-    """アカウント種別"""
+    u"""メッセージコンタクト方向"""
     
     fromBeauti =CodeValue(1, "美容師から")
     fromSalon =CodeValue(2, "サロンから")

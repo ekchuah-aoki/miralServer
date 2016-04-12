@@ -1,7 +1,9 @@
+# coding: UTF-8
+
 import CodeValue
 
 class UMU_FLG():
-    """アカウント種別"""
+    u"""有無フラグ"""
     
     ari =CodeValue(1, "有り")
     nasi =CodeValue(2, "無し")

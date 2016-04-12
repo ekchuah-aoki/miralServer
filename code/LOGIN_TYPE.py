@@ -1,7 +1,9 @@
+# coding: UTF-8
+
 import CodeValue
 
 class LOGIN_TYPE():
-    """アカウント種別"""
+    u"""ログイン種別"""
     
     facebook =CodeValue(1, "ファイスブック")
     instagram =CodeValue(2, "インスタグラム")
