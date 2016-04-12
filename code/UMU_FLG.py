@@ -1,6 +1,6 @@
 # coding: UTF-8
 
-import CodeValue
+from code.CodeValue import CodeValue
 
 class UMU_FLG():
     u"""有無フラグ"""

@@ -1,6 +1,6 @@
 # coding: UTF-8
 
-import CodeValue
+from code.CodeValue import CodeValue
 
 class ZUMI_FLG():
     u"""済みフラグ"""

@@ -1,6 +1,6 @@
 # coding: UTF-8
 
-import CodeValue
+from code.CodeValue import CodeValue
 
 class MATCHING_DIRECT():
     u"""マッチング依頼方向"""
