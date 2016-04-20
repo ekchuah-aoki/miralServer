@@ -7,4 +7,5 @@ class BaseKind(ndb.Model):
     regDateTime = ndb.DateTimeProperty(auto_now_add=True)           #登録日時
     modUserKey = ndb.KeyProperty(kind='MstAdminUserKind')        #変更者CD
     modDateTime = ndb.DateTimeProperty(auto_now=True)               #変更日時
+    delFlg =ndb.BooleanProperty(default=False)                  #削除フラグ
 

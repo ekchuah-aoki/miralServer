@@ -5,7 +5,7 @@ from kind.BaseKind import BaseKind
 
 class BeauticianMyGalleryKind(BaseKind):
     u"""美容師プロフィール画像情報"""
-    salonKey = ndb.KeyProperty(index=True,"kind=BeauticianKind")      #美容師Key
+    salonKey = ndb.KeyProperty(indexed=True,"kind=BeauticianKind")      #美容師Key
     displayOrder = ndb.IntegerProperty()                              #表示順
-    imageId = ndb.StringProperty()                                    #画像ID
+    imageData = ndb.BlobProperty()                                  #画像データ
     caption = ndb.StringProperty()                                    #キャプション

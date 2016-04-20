@@ -5,7 +5,7 @@ from code.CodeValue import CodeValue
 class PREFECTURE():
     u"""都道府県"""
     
-    hokkaidou =CodeValue(1, "  北海道")
+    hokkaidou =CodeValue(1, "北海道")
     aomori =CodeValue(2, "青森")
     iwate =CodeValue(3, "岩手")
     miyagi =CodeValue(4, "宮城")

@@ -5,8 +5,9 @@ from kind.BaseKind import BaseKind
 
 class BeauticianLicenseKind(BaseKind):
     u"""美容師免許"""
-    beautiKey = ndb.KeyProperty(index=True,"kind=BeauticianKind")     #美容師Key
-    authReqDate = ndb.DateProperty()                                  #承認依頼日
+    accountKey = ndb.KeyProperty("kind=AccountKind")                  #アカウントKey
+    authReqDate = ndb.DateTimeProperty()                              #承認依頼日
     authDate = ndb.DateProperty()                                     #承認日
     userKey = ndb.KeyProperty("kind=MstAdminUserKind")                #承認ユーザKey
-    imageId = ndb.StringProperty()                                    #画像ID
+    imageData = ndb.KeyProperty("kind=ImageKind")                     #画像ID
+    thImageData = ndb.KeyProperty("kind=ImageKind")                   #サムネイル画像ID

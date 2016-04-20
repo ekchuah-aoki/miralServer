@@ -5,10 +5,8 @@ from kind.BaseKind import BaseKind
 
 class BeauticianKind(BaseKind):
     u"""美容師情報"""
-    email = ndb.StringProperty(index=True)                            #E mailアドレス
+    accountKey = ndb.KeyProperty("kind=AccountKind")                  #アカウントKey
     nickName = ndb.StringProperty()                                   #ニックネーム
-    gender = ndb.IntegerProperty()                                    #性別
-    birthday = ndb.DateProperty()                                     #生年月日
     compEval = ndb.FloatProperty()                                    #総合評価
     careerYears = ndb.IntegerProperty()                               #経歴年数
     pr = ndb.IntegerProperty()                                        #自己PR
