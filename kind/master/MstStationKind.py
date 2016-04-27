@@ -6,9 +6,10 @@ from kind.BaseKind import BaseKind
 class MstStationKind(BaseKind):
     u"""路線駅マスタ"""
     stationCd = ndb.IntegerProperty(indexed=True)                       #駅コード
-    name = ndb.StringProperty()                                       #駅名
-    nameKana = ndb.StringProperty()                                   #駅名カナ
+    stationGpCd = ndb.IntegerProperty(indexed=True)                     #駅グループコード
+    stationName = ndb.StringProperty()                                  #駅名
+    stationNameKana = ndb.StringProperty()                              #駅名カナ
     trainCd = ndb.IntegerProperty(indexed=True)                         #路線コード
-    displayOrder = ndb.IntegerProperty()                              #表示順
-    geoCd = ndb.GeoPtProperty()                                       #緯度・軽度
+    geoCd = ndb.GeoPtProperty()                                         #緯度・軽度
+    displayOrder = ndb.IntegerProperty()                                #表示順
 

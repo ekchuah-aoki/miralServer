@@ -5,10 +5,8 @@ from common.ImageStrage import ImageStrage
 class BeautiImage(ImageStrage):
     
     #IMAGE_PATH = "/beauti/"
-    IMAGE_PATH = "/beauti/{0}/{1}.jpg"
-    IMGTYPE_LAICENSE_IMAGE_ORIGINAL = "lcs01org"
-    IMGTYPE_LAICENSE_IMAGE = "lcs01"
-    IMGTYPE_LAICENSE_THUMBNAIL_IMAGE = "lcs01t"
+    IMAGE_PATH = "/salon/{0}/{1}.jpg"
+    IMGTYPE_OWNER_IMAGE = "owr01"       #オーナー画像のサイズは一種類のみ
     
     @classmethod
     def saveLicenseImage(cls, accountId_, type_, imgData_):

@@ -1,36 +1,61 @@
 # coding: UTF-8
+from protorpc import messages
+from google.appengine.ext import ndb
+
+from common.msg.ApiResponceMsg import ApiResponceMsg
 from kind.AccountKind import AccountKind
 from code.LOGIN_TYPE import LOGIN_TYPE
 from code.OK_NG import OK_NG
 from code.UMU_FLG import UMU_FLG
 from common.MiralLogger import MiralLogger
-from common.msg.AccountMsg import AccountMsg
 from common.msg.ApiResponceMsg import ApiResponceMsg
 from common.MiralMsgTbl import MiralMsgTbl
+from kind.SalonKind import SalonKind
 from datetime import date
 
-class AccountService():
-    u"""アカウントサービス"""
+class SalonQueryGetByMapAreaMsg():
+    minLet = messages.StringField           #最小緯度
+    minLon = messages.StringField           #最小経度
+    maxLet = messages.StringField           #最大緯度
+    maxLon = messages.StringField           #最大経度
+     
+
+
+
+
+class SalonQueryService():
+    u"""サロンクエリーサービス"""
     
-    def get(self, loginType_, id_):
+    def _getBasicCondition(self, accountId_):
+        u"""検索対象条件の取得"""
+        
+        acc = ndb.Key("")
+        
+    
+    def getByKeyword(self, accountId, keyword_, sPos_, ePos_):
+        u"""キーワード（住所、駅名）検索"""
+        
+        //
+ 
+        acq = AccountKind.query(AccountKind.email == id_)
+   
+    
+    def getBasicInfo(self, salonId_):
         
         logger = MiralLogger()
 
-        logger.debug('get ' + str(loginType_) + ' ' + str(LOGIN_TYPE.facebook.getCode()))
+        logger.debug('getBasicInfo ' + str(salonId_))
         
-        if LOGIN_TYPE.facebook.getCode()==loginType_:
-            acq = AccountKind.query(AccountKind.facebookId == id_)
-            
-            logger.debug('check facebook')
-            
-        elif LOGIN_TYPE.twitter.equalCd(loginType_):     
-            acq = AccountKind.query(AccountKind.twitterId == id_)
-        elif LOGIN_TYPE.instagram.equalCd(loginType_):     
-            acq = AccountKind.query(AccountKind.instagramId == id_)
-        elif LOGIN_TYPE.googleplus.equalCd(loginType_):     
-            acq = AccountKind.query(AccountKind.googleplusId == id_)
-        else:
-            acq = AccountKind.query(AccountKind.email == id_)
+        #サロン情報取得
+        salonKey = SalonKind.key(SalonKind, salonId_)
+        salon = salonKey.get()
+        
+        
+        
+        
+        
+        
+        salonQry = acq = AccountKind.query(AccountKind.email == id_)
             logger.debug('check email')
             
         accountKnd = acq.get()
@@ -64,13 +89,18 @@ class AccountService():
         self.__covMsg2Knd(accountMsg_, accountKnd) 
         
         accountKnd.put()
-        accountMsg_.accountId = str(accountKnd.key.id()) 
-        accountMsg_.res = ApiResponceMsg(rstCode=OK_NG.ok.getCode())
+        
+        resMsg = KindAddMsg()
+        resMsg.kindId = str(accountKnd.key.id()) 
+        resMsg.res = ApiResponceMsg(rstCode=OK_NG.ok.getCode())
         logger.debug("add ok!")
-        return accountMsg_
+        return resMsg
         
     
-    def __covKnd2Msg(self, k_, m_):
+    def __covKnd2Msg(self, k_, m_, mode):
+        
+        if
+        
         m_.email = k_.email                            #EMailアドレス
         m_.acType = k_.acType                          #アカウント種別
         m_.lastName = k_.lastName                      #氏名(苗字)

@@ -2,8 +2,12 @@
 
 import webapp2
 
-from tools.master import importTrainKind
+from tools.master.importTrainCompanyKind import importTrainCompanyKind
+from tools.master.importTrainKind import importTrainKind
+from tools.master.importStationKind import importStationKind
 
 app = webapp2.WSGIApplication([
-                               ('/toolmain/importTarainKind', importTrainKind.importTrainKind),
+                               ('/toolmain/importTrainCompanyKind', importTrainCompanyKind),
+                               ('/toolmain/importTrainKind', importTrainKind),
+                               ('/toolmain/importStationKind', importStationKind),
 ], debug=True)            
