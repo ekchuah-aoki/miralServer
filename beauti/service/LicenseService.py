@@ -10,12 +10,12 @@ from common.MiralLogger import MiralLogger
 from protorpc import messages
 
 class LicenseAddMsg(messages.Message):
-    u"""アカウント新規登録依頼メッセージ"""
+    u"""美容師の美容師免許の新規登録依頼メッセージ"""
     accountId = messages.StringField(1)                 #アカウントID
     imgbase64data = messages.StringField(2)              #イメージデータ
 
 class LicenseAddResMsg(messages.Message):
-    u"""アカウント新規登録結果メッセージ"""
+    u"""美容師の美容師免許の新規登録結果メッセージ"""
     res = messages.MessageField(ApiResponceMsg, 1)      #結果
 
 

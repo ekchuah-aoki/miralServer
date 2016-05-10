@@ -57,10 +57,10 @@ class MiralServerApi(remote.Service):
         
         logger = MiralLogger()
         
-        logger.debug(u"★"+"param1:"+request.param[0]+ " param2:"+request.param[1])
+        logger.debug(u"★"+"loginType:"+str(request.loginType)+ " id:"+request.id)
         
         service = AccountService();
-        return service.get(int(request.loginType), request.id)
+        return service.get(request.loginType, request.id)
 
 
 
@@ -106,7 +106,7 @@ class MiralServerApi(remote.Service):
                      name='beauti.licenseservice.add')
 
     def beauti_licenseservice_add(self, request): 
-        u"""ライセンス情報の登録"""
+        u"""美容師の美容師免許の新規登録"""
         logger = MiralLogger()
         
         logger.debug(u"★beauti_licenseimgservice_save")

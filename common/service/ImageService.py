@@ -12,7 +12,7 @@ class ImageGetMsg(messages.Message):
     fileName  = messages.StringField(1)                 #イメージファイル名
     
 class ImageGetResMsg(messages.Message):
-    u"""画像データ（Base64）メッセージ"""
+    u"""画像データ取得結果メッセージ"""
     res = messages.MessageField(ApiResponceMsg, 1)
     imgBase64Data = messages.StringField(2)     
     

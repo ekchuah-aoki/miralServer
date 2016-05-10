@@ -23,17 +23,17 @@ class AccountMsg(messages.Message):
     firstNameKana = messages.StringField(7)                               #氏名カナ(名前)
     prefecturesCd = messages.IntegerField(8)                              #都道府県コード
     tell = messages.StringField(9)                                        #電話番号
-    passWord = messages.StringField(10,)                                  #パスワード
+    passWord = messages.StringField(10)                                   #パスワード
     facebookId = messages.StringField(16)                                 #FacebookID
     facebookToke = messages.StringField(17)                               #FacebookToken
     twitterId = messages.StringField(18)                                  #TwitterId   
     twitterToken = messages.StringField(19)                               #TwitterToken  
-    googleplusId = messages.StringField(20)                                   #googleId   
-    googleplusToken = messages.StringField(21)                                #googleToken      
+    googleplusId = messages.StringField(20)                               #googleId   
+    googleplusToken = messages.StringField(21)                            #googleToken      
     instagramId = messages.StringField(22)                                #instagramId   
     instagramToken = messages.StringField(23)                             #instagramToken
 
-    accountId = messages.StringField(24)                                     #アカウントId
+    accountId = messages.StringField(24)                                  #アカウントId
 
 class AccountGetMsg(messages.Message):
     u"""アカウント取得依頼メッセージ"""
@@ -83,9 +83,12 @@ class AccountService():
         
         
         self.__covKnd2Msg(accountKnd, accountMsg)
-        accountMsg.res = ApiResponceMsg(rstCode=UMU_FLG.ari.getCode())
-            
-        return accountMsg
+
+        resMsg = AccountGetResMsg()
+        
+        resMsg.res = ApiResponceMsg(rstCode=UMU_FLG.ari.getCode())
+        resMsg.account = accountMsg 
+        return resMsg
     
     def isEmailExists(self, email_):
         acq = AccountKind.query(AccountKind.email == email_)

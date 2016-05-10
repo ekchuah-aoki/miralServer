@@ -26,8 +26,8 @@ class BeauticianMsg(messages.Message):
     gender = messages.IntegerField(6)                   #性別
 
     birthday_y = messages.StringField(7)                #生年月日 年
-    birthday_m = messages.StringField(8)                #生年月日 年
-    birthday_d = messages.StringField(9)                #生年月日 年
+    birthday_m = messages.StringField(8)                #生年月日 月
+    birthday_d = messages.StringField(9)                #生年月日 日
     
     licenseFlg = messages.StringField(10)               #美容師免許承認済みフラグ
     srhCondPref = messages.IntegerField(11)             #検索対象都道府県
@@ -130,23 +130,3 @@ class BeauticianService():
     def getThread(self, accountId_, type_):
         return BeautiImage.getImageData(accountId_, type_)
             
-        
-    def __covMsg2Knd(self, m_, k_, setMode_):
-        k_.accountKey = ndb.Key("AccountKind", m_.accountId)              #アカウントKey
-        k_.nickName = ndb.StringProperty()                                   #ニックネーム
-        pr = ndb.IntegerProperty()                                        #自己PR
-        #k_.compEval = ndb.FloatProperty()                                    #総合評価
-        #totalPoint = ndb.IntegerProperty(default=0)                       #所有合計ポイント
-        gender = ndb.IntegerProperty()                                    #性別
-        birthday = ndb.DateProperty()                                     #生年月日
-        licenseFlg = ndb.TextProperty()                                   #美容師免許承認済みフラグ
-        srhCondPref = ndb.IntegerProperty(repeated=True)                  #検索対象都道府県
-        srhCondIowestRat = ndb.FloatProperty()                            #検索対象最低総合評価
-        #BeauticianMyGalleryKeyList = ndb.KeyProperty(repeated=True,"kind=BeauticianMyGalleryKind")     #プロフィール画像
-        #BeauticianWorkGalleryKeyList = ndb.KeyProperty(repeated=True,"kind=BeauticianWorkGalleryKind") #実績画像
-      
-      
-      
-      
-      
-         

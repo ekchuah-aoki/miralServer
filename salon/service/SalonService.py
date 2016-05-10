@@ -92,7 +92,7 @@ class SalonService():
         salonKnd.stationCd = salonMsg.stationCd                                         #最寄り駅
         salonKnd.workingTime = salonMsg.messages.IntegerField()                         #駅徒歩
         
-        salonKnd.geoCd = ndb.GeoPt(salonMsg.lat + "," + salonMsg.lon)                         #GEOコード      
+        salonKnd.geoCd = ndb.GeoPt(salonMsg.lat + "," + salonMsg.lon)                   #GEOコード      
         
         salonKnd.compEval = salonMsg.compEval                                           #総合評価
         salonKnd.oneHourPoint = salonMsg.oneHourPoint                                   #１時間利用ポイント
