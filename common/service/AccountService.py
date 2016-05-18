@@ -1,6 +1,7 @@
 # coding: UTF-8
 from protorpc import messages
 from datetime import date
+from google.appengine.ext import ndb
 
 from kind.AccountKind import AccountKind
 from code.LOGIN_TYPE import LOGIN_TYPE
@@ -10,52 +11,28 @@ from code.ACCOUNT_TYPE import ACCOUNT_TYPE
 from common.MiralLogger import MiralLogger
 from common.msg.ApiResponceMsg import ApiResponceMsg
 from common.MiralMsgTbl import MiralMsgTbl
+from kind.BeauticianKind import BeauticianKind
 
+from common.msg.AccountServiceMsg import AccountMsg
+from common.msg.AccountServiceMsg import AccountGetResMsg
 
-
-class AccountMsg(messages.Message):
-    u"""アカウントメッセージ"""
-    email = messages.StringField(2)                                       #EMailアドレス
-    acType = messages.IntegerField(3)                                     #アカウント種別
-    lastName = messages.StringField(4)                                    #氏名(苗字)
-    firstName = messages.StringField(5)                                   #氏名(名前)
-    lastNameKana = messages.StringField(6)                                #氏名カナ(苗字)
-    firstNameKana = messages.StringField(7)                               #氏名カナ(名前)
-    prefecturesCd = messages.IntegerField(8)                              #都道府県コード
-    tell = messages.StringField(9)                                        #電話番号
-    passWord = messages.StringField(10)                                   #パスワード
-    facebookId = messages.StringField(16)                                 #FacebookID
-    facebookToke = messages.StringField(17)                               #FacebookToken
-    twitterId = messages.StringField(18)                                  #TwitterId   
-    twitterToken = messages.StringField(19)                               #TwitterToken  
-    googleplusId = messages.StringField(20)                               #googleId   
-    googleplusToken = messages.StringField(21)                            #googleToken      
-    instagramId = messages.StringField(22)                                #instagramId   
-    instagramToken = messages.StringField(23)                             #instagramToken
-
-    accountId = messages.StringField(24)                                  #アカウントId
-
-class AccountGetMsg(messages.Message):
-    u"""アカウント取得依頼メッセージ"""
-    loginType = messages.IntegerField(1)           #ログインタイプ
-    id = messages.StringField(2)                   #識別ID
-
-class AccountGetResMsg(messages.Message):
-    u"""アカウント取得結果メッセージ"""
-    res = messages.MessageField(ApiResponceMsg, 1)      #結果
-    account = messages.MessageField(AccountMsg, 2)      #アカウント情報
-
-
+from common.CommUtil import CommUtil
 
 class AccountService():
     u"""アカウントサービス"""
-    
+
+         
+    def getKind(self, id_):
+        accountKey = ndb.Key(AccountKind, id_)
+        return accountKey.get()
+        
+        
     def get(self, loginType_, id_):
         u"""アカウント情報取得"""
         
         logger = MiralLogger()
 
-        logger.debug('get ' + str(loginType_) + ' ' + str(LOGIN_TYPE.facebook.getCode()))
+        logger.debug('get loginType:' + str(loginType_) + ' id:' + id_)
         
         if LOGIN_TYPE.facebook.getCode()==loginType_:
             acq = AccountKind.query(AccountKind.facebookId == id_)
@@ -74,46 +51,86 @@ class AccountService():
             
         accountKnd = acq.get()
 
-        accountMsg =  AccountMsg()
+
+        resMsg = AccountGetResMsg()
         
         if not accountKnd:
             logger.debug("loginType:"+str(loginType_) +" id:"+id_+u" は存在しません")
-            accountMsg.res = ApiResponceMsg(rstCode=UMU_FLG.nasi.getCode())
-            return accountMsg
+            resMsg.res = ApiResponceMsg(rstCode=UMU_FLG.nasi.getCode())
+            return resMsg
         
         
-        self.__covKnd2Msg(accountKnd, accountMsg)
+        accountMsg =  AccountMsg()
+        self.covKnd2Msg(accountKnd, accountMsg)
 
-        resMsg = AccountGetResMsg()
         
         resMsg.res = ApiResponceMsg(rstCode=UMU_FLG.ari.getCode())
         resMsg.account = accountMsg 
         return resMsg
     
-    def isEmailExists(self, email_):
+    def isEmailExists(self, email_, id_=""):
+        
         acq = AccountKind.query(AccountKind.email == email_)
-        existAccountKnd = acq.get(keys_only=True)
-        if existAccountKnd:
+        existAccountKey = acq.get(keys_only=True)
+        if existAccountKey:
+            
+            if id_ != "" and existAccountKey.id() != id_:
+                return False
+            
             return True
         
         return False
     
+    def getBeautiKeyByAccountId(self, accountId_):
+        
+        accountKey = ndb.Key(AccountKind, accountId_)
+        
+        accountKind = accountKey.get()
+        
+        return accountKind.beautiKey
     
-    def add(self, accountMsg_):
+        
+    def getSalonKeyByAccountId(self, accountId_):
+        accountKey = ndb.Key(AccountKind, accountId_)
+        
+        accountKind = accountKey.get()
+        
+        return accountKind.salonKey
+
+    
+    def add(self, accountMsg_, kindKey_):
         
         logger = MiralLogger()
         
         accountKnd = AccountKind()
         
-        self.__covMsg2Knd(accountMsg_, accountKnd) 
+        self.__covMsg2Knd(accountMsg_, accountKnd, True) 
+        
+        if accountMsg_.acType == ACCOUNT_TYPE.beauti.getCode():
+            accountKnd.beautiKey = kindKey_
+        else:
+            accountKnd.salonKey = kindKey_
         
         accountKnd.put()
         
         logger.debug("AccountService add ok!")
         return accountKnd.key
         
+    def modify(self, accountMsg_):
+        
+        logger = MiralLogger()
+        
+        accountKey = ndb.Key('AccountKind', accountMsg_.accountid)
+        accountKnd = accountKey.get()
+        
+        self.__covMsg2Knd(accountMsg_, accountKnd, False) 
+        
+        accountKnd.put()
+        
+        logger.debug("AccountService modify ok!")
+        return
     
-    def __covKnd2Msg(self, k_, m_):
+    def covKnd2Msg(self, k_, m_):
         m_.email = k_.email                            #EMailアドレス
         m_.acType = k_.acType                          #アカウント種別
         m_.lastName = k_.lastName                      #氏名(苗字)
@@ -131,12 +148,31 @@ class AccountService():
         m_.googleplusToken = k_.googleplusToken        #googleToken      
         m_.instagramId = k_.instagramId                #instagramId   
         m_.instagramToken = k_.instagramToken          #instagramToken 
+
+        m_.temporary = k_.temporary                    #仮登録フラグ 
         
-        m_.accountId = str(k_.key.id())            
+        m_.accountId = str(k_.key.id()) 
         
-    def __covMsg2Knd(self, m_, k_):
-        k_.email = m_.email                            #EMailアドレス
-        k_.acType = m_.acType                          #アカウント種別
+        if  k_.acType == ACCOUNT_TYPE.beauti.getCode():
+            m_.kindId = str(k_.beautiKey.id())
+        else:
+            m_.kindId = str(k_.salonKey.id())              
+        
+    def __covMsg2Knd(self, m_, k_, addMode):
+        
+        if addMode:
+            k_.email = m_.email                            #EMailアドレス
+            k_.acType = m_.acType                          #アカウント種別
+            k_.facebookId = m_.facebookId                  #FacebookID
+            k_.facebookToke = m_.facebookToke              #FacebookToken
+            k_.twitterId = m_.twitterId                    #TwitterId   
+            k_.twitterToken = m_.twitterToken              #TwitterToken  
+            k_.googleplusId = m_.googleplusId              #googleId   
+            k_.googleplusToken = m_.googleplusToken        #googleToken      
+            k_.instagramId = m_.instagramId                #instagramId   
+            k_.instagramToken = m_.instagramToken          #instagramToken
+            
+         
         k_.lastName = m_.lastName                      #氏名(苗字)
         k_.firstName = m_.firstName                    #氏名(名前)
         k_.lastNameKana = m_.lastNameKana              #氏名カナ(苗字)
@@ -144,14 +180,6 @@ class AccountService():
         k_.prefecturesCd = m_.prefecturesCd            #都道府県
         k_.tell = m_.tell                              #電話番号
         k_.passWord = m_.passWord                      #パスワード
-        k_.facebookId = m_.facebookId                  #FacebookID
-        k_.facebookToke = m_.facebookToke              #FacebookToken
-        k_.twitterId = m_.twitterId                    #TwitterId   
-        k_.twitterToken = m_.twitterToken              #TwitterToken  
-        k_.googleplusId = m_.googleplusId              #googleId   
-        k_.googleplusToken = m_.googleplusToken        #googleToken      
-        k_.instagramId = m_.instagramId                #instagramId   
-        k_.instagramToken = m_.instagramToken          #instagramToken
         
-          
+        k_.temporary = m_.temporary                     #仮登録フラグ
             

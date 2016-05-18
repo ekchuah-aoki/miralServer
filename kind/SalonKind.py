@@ -3,10 +3,12 @@
 from google.appengine.ext import ndb
 from kind.BaseKind import BaseKind
 from kind.ImageKind import ImageKind
+from kind.SalonGalleryKind import SalonGalleryKind
+from kind.SalonFacilityKind import SalonFacilityKind
+from kind.SalonExpendableKind import SalonExpendableKind
 
 class SalonKind(BaseKind):
     u"""サロン情報"""
-    accountKey = ndb.KeyProperty(index=True,"kind=AccountKind")       #アカウントKey
     name = ndb.StringProperty()                                       #店舗名
     nameKana = ndb.StringProperty()                                   #店舗名カナ
     prefecturesCd = ndb.IntegerProperty()                             #都道府県
@@ -26,11 +28,17 @@ class SalonKind(BaseKind):
     parkingCd = ndb.IntegerProperty()                                 #駐車場利用区分
     parkingRem = ndb.StringProperty()                                 #駐車場備考
     remarks = ndb.TextProperty()                                      #備考
-    ownerImageKey = ndb.KeyProperty(kind=ImageKind)                 #オーナー画像Key
-    ownerThImageKey = ndb.KeyProperty(kind=ImageKind)               #オーナーサムネイル画像Key
+    #ownerImageKey = ndb.KeyProperty(kind=ImageKind)                   #オーナー画像Key
+    ownerThImageKey = ndb.KeyProperty(kind=ImageKind)                 #オーナーサムネイル画像Key
     owrnerComme = ndb.TextProperty()                                  #オーナーからの一言
     openTime = ndb.TimeProperty()                                     #営業時間開始
     closeTime = ndb.TimeProperty()                                    #営業時間終了
     srhCondPref = ndb.IntegerProperty(repeated=True)                  #美容師検索対象都道府県
     srhCondIowestRat = ndb.FloatProperty()                            #美容師検索対象最低総合評価
     mirrorCnt = ndb.IntegerProperty()                                 #利用可能席数
+
+    galleryKey = ndb.KeyProperty(kind=SalonGalleryKind)  
+    facilityKey = ndb.KeyProperty(kind=SalonFacilityKind)  
+    expendableKey = ndb.KeyProperty(kind=SalonExpendableKind)  
+
+    

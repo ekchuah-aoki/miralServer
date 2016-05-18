@@ -8,5 +8,8 @@ class ACCOUNT_TYPE():
     beauti =CodeValue(1, "美容師")
     salon =CodeValue(2, "サロン")
     
+    @classmethod    
+    def test(cls):
+        return cls.__dict__
     
-    
+        

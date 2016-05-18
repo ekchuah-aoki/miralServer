@@ -2,6 +2,8 @@
 
 from google.appengine.ext import ndb
 from kind.BaseKind import BaseKind
+from kind.BeauticianKind import BeauticianKind
+from kind.SalonKind import SalonKind
 
 class AccountKind(BaseKind):
     u"""アカウント情報"""
@@ -22,4 +24,9 @@ class AccountKind(BaseKind):
     googleplusId = ndb.StringProperty(indexed=True)                   #googleId   
     googleplusToken = ndb.StringProperty()                            #googleToken      
     instagramId = ndb.StringProperty(indexed=True)                    #instagramId   
-    instagramToken = ndb.StringProperty()                             #instagramToken          
+    instagramToken = ndb.StringProperty()                             #instagramToken
+    
+    beautiKey = ndb.KeyProperty(kind=BeauticianKind)                  #美容師Key
+    salonKey = ndb.KeyProperty(kind=SalonKind)                        #サロンKey
+    
+    temporary = ndb.BooleanProperty(default=True)                   #仮登録フラグ  

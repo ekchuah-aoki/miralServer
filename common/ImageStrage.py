@@ -13,6 +13,10 @@ class ImageStrage():
     
     @classmethod
     def save(cls, filename_, imgData_, id_=0):
+        
+        logger = MiralLogger() 
+        logger.debug("ImageStrage save:"+filename_)
+        
         with gcs.open(cls.IMAGE_BASE_PATH + filename_, 'w') as f:
             f.write(imgData_)
 
@@ -21,6 +25,10 @@ class ImageStrage():
 
     @classmethod
     def saveBase64(cls, filename_, imgBase64Data_, id_=0):
+        
+        logger = MiralLogger() 
+        logger.debug("ImageStrage saveBase64:"+filename_)
+        
         with gcs.open(cls.IMAGE_BASE_PATH + filename_, "w") as f:
             f.write(imgBase64Data_.encode('utf-8'))
         
@@ -51,10 +59,9 @@ class ImageStrage():
         with gcs.open(cls.IMAGE_BASE_PATH + filename_, "r") as f:
             data = f.read().decode('utf-8')
         
-        logger = MiralLogger()
-        
-        logger.debug(data)
-
         return data
         
+    @classmethod
+    def deleteKind(cls, key_):
+        key_.delete()
         
