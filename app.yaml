@@ -12,9 +12,8 @@ handlers:
 - url: /_ah/spi/.*
   script: miralServer_api.APPLICATION
 
-
   
-libraries:
+libraries: 
 - name: pycrypto
   version: latest
 - name: endpoints

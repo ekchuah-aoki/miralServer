@@ -47,6 +47,10 @@ from common.service.ImageService  import ImageService
 from common.service.ImageService import ImageGetMsg
 from common.service.ImageService import ImageGetResMsg 
 
+#マスタ関係
+from common.service.TrainMastrService import TrainRouteService
+from common.msg.TrainMasterMsg import TrainMasterGetTrainListResMsg 
+from common.msg.TrainMasterMsg import TrainMasterGetTrainListMsg 
 
 from common.MiralLogger import MiralLogger
 
@@ -99,7 +103,6 @@ class MiralServerApi(remote.Service):
         service = BeauticianService();
         return service.addTempAccount(request)
 
-    ##########################################
     #アカウント設定画面情報取得
     @endpoints.method(BeauticianGetAccountMsg, BeauticianGetAccount4EditResMsg,
                      path='beauti/beauticianservice/getacc4edit', http_method='POST',
@@ -114,7 +117,6 @@ class MiralServerApi(remote.Service):
         service = BeauticianService();
         return service.getAccount4Edit(request)
     
-    ##########################################
     #アカウント情報変更
     @endpoints.method(BeauticianModityAccountMsg, BeauticianModityAccountResMsg,
                      path='beauti/beauticianservice/modify', http_method='POST',
@@ -131,7 +133,6 @@ class MiralServerApi(remote.Service):
     
     
     
-    ##########################################
     #美容師免許の登録
     @endpoints.method(LicenseAddMsg, LicenseAddResMsg,
                      path='beauti/licenseservice/set', http_method='POST',
@@ -147,7 +148,6 @@ class MiralServerApi(remote.Service):
         service = LicenseService();
         return service.set(request.beautiId, request.imgbase64data)
 
-    ##########################################
     #美容師免許サムネイル画像の取得
     @endpoints.method(LicenseGetThumbnailImgMsg, LicenseGetThumbnailImgResMsg,
                      path='beauti/licenseservice/getthumbnailimage', http_method='POST',
@@ -163,6 +163,24 @@ class MiralServerApi(remote.Service):
         service = LicenseService();
         return service.getThumbnailImage(request.beautiId)
 
+    
+    
+    ########################################
+    #マスタ関係
+    
+    
+    @endpoints.method(TrainMasterGetTrainListMsg, TrainMasterGetTrainListResMsg,
+                     path='common/trainmasterservice/gettrainlist', http_method='POST',
+                     name='common.trainmasterservice.gettrainlist')
+
+    def common_trainmasterservice_gettrainlist(self, request): 
+        u"""沿線リスト取得"""
+        logger = MiralLogger()
+        
+        logger.debug(u"★common_trainmasterservice_gettrainlist")
+        
+        service = TrainRouteService();
+        return service.getTrainList(request)
     
     ###################################################################
     ###################################################################

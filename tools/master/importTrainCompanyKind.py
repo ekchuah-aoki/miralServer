@@ -2,16 +2,14 @@
 from common.MiralLogger import MiralLogger
 import webapp2
 from google.appengine.ext import ndb
+import cloudstorage as gcs
 
 from kind.master.MstTrainCompanyKind import MstTrainCampanyKind
 
 class importTrainCompanyKind(webapp2.RequestHandler):
-    
-    data = [
-        [2 , "JR東日本" , "ジェイアールヒガシニホン",2],
-        [15 , "小田急電鉄" , "オダキュウデンテツ",15],
-        [18 , "東京メトロ" , "トウキョウメトロ",18],
-            ]
+
+    #FILE_PATH = "/miral-1265.appspot.com"
+    FILE_PATH = "/Users/y.aoki/myfolder/temp/company20160401-3.csv"
     
     def outDB(self):
         log = MiralLogger()
@@ -20,17 +18,19 @@ class importTrainCompanyKind(webapp2.RequestHandler):
         ndb.delete_multi(
             MstTrainCampanyKind.query().fetch(keys_only=True)
         )        
-        
-        for row in self.data:
-            
-            train =  MstTrainCampanyKind(
-                            campanyCd=row[0],
-                            companyNama=row[1],
-                            companyNameKana=row[2],
-                            displayOrder=row[3]
-                                  )
 
-            train.put()
+        #csvファイルオープン
+        with gcs.open(self.FILE_PATH, 'r') as f:
+            for row in self.data:
+                
+                train =  MstTrainCampanyKind(
+                                campanyCd=row[0],
+                                companyNama=row[1],
+                                companyNameKana=row[2],
+                                displayOrder=row[3]
+                                      )
+    
+                train.put()
         
     def get(self):
         self.outDB()
