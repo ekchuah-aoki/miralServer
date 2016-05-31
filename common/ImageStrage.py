@@ -50,16 +50,21 @@ class ImageStrage():
         
     @classmethod
     def read(cls, filename_):
-        with gcs.open(cls.IMAGE_BASE_PATH + filename_, 'r') as f:
-            return f.read()
-
+        try:
+            with gcs.open(cls.IMAGE_BASE_PATH + filename_, 'r') as f:
+                return f.read()
+        except:
+            return None    
 
     @classmethod
     def readBase64(cls, filename_):
-        with gcs.open(cls.IMAGE_BASE_PATH + filename_, "r") as f:
-            data = f.read().decode('utf-8')
-        
-        return data
+        try:
+            with gcs.open(cls.IMAGE_BASE_PATH + filename_, "r") as f:
+                data = f.read().decode('utf-8')
+            
+            return data
+        except:
+            return None    
         
     @classmethod
     def deleteKind(cls, key_):

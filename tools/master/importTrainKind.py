@@ -19,8 +19,9 @@ class importTrainKind(webapp2.RequestHandler):
             MstTrainKind.query().fetch(keys_only=True)
         )        
 
-        targetCampany = ("2","15","18")
+        targetCampany = ("2")
         
+        count =0
         
         #with gcs.open(self.FILE_PATH, 'r') as f:
         with open(self.FILE_PATH, 'r') as f:
@@ -43,9 +44,12 @@ class importTrainKind(webapp2.RequestHandler):
                 train.displayOrder=int(row[0])
 
                 train.put()
+                
+                count = count+1
         
+        return count
         
     def get(self):
-        self.outDB()
-        self.response.out.write(u'終了!')
+        count = self.outDB()
+        self.response.out.write(u'終了!  ' + str(count))
         

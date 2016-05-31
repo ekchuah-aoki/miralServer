@@ -15,52 +15,61 @@ from common.DateUtil import DateUtil
 from common.service.AccountService import AccountService
 from common.service.AccountService import AccountMsg
 
-class SalonMsg(messages.Message):
-    u"""サロン情報"""
-    name = messages.StringField()                                       #店舗名
-    nameKana = messages.StringField()                                   #店舗名カナ
-    prefecturesCd = messages.IntegerField()                             #都道府県
-    streetAdd1 = messages.StringField()                                 #住所１
-    streetAdd2 = messages.StringField()                                 #住所２
-    stationCd = messages.IntegerField()                                 #最寄り駅
-    workingTime = messages.IntegerField()                               #駅徒歩
-    lat = messages.StringField()                                        #緯度
-    lon = messages.StringField()                                        #経度
-    compEval = messages.FloatField()                                    #総合評価
-    oneHourPoint = messages.IntegerField()                              #１時間利用ポイント
-    oneDayPoint = messages.IntegerField()                               #１日利用ポイント
-    conditions = messages.StringField()                                 #利用条件
-    cancelPer = messages.FloatField()                                   #キャンセル割合
-    holiday = messages.StringField()                                    #定休日
-    hpUrl = messages.StringField()                                      #HP URL
-    email = messages.StringField()                                      #E mailアドレス
-    parkingCd = messages.IntegerField()                                 #駐車場区分
-    parkingRem = messages.StringField()                                 #駐車場備考
-    remarks = messages.StringField()                                    #備考
-    ownerThImage = messages.StringField()                               #オーナーサムネイルファイル名
-    owrnerComme = messages.StringField()                                #オーナーからの一言
-    openTime = messages.StringField()                                   #営業時間開始
-    closeTime = messages.StringField()                                  #営業時間終了
-    srhCondPref = messages.IntegerField(repeated=True)                  #美容師検索対象都道府県
-    srhCondIowestRat = messages.FloatField()                            #美容師検索対象最低総合評価
-    salonGalleryThImgList = messages.StringField(repeated=True)         #プロフィール画像ファイル名
-    mirrorCnt = messages.IntegerField()                                 #利用可能席数
+class SalonAccountEditMsg(messages.Message):
+    u"""サロン情報（アカウント編集用）"""
+    
+    
+    email = messages.StringField(1)                         #EMailアドレス
+    lastName = messages.StringField(2)                      #氏名(苗字)
+    firstName = messages.StringField(3)                     #氏名(名前)
+    lastNameKana = messages.StringField(4)                  #氏名カナ(苗字)
+    firstNameKana = messages.StringField(5)                 #氏名カナ(名前)
+    prefecturesCd1 = messages.IntegerField(6)                #都道府県コード
+    tell = messages.StringField(7)                          #電話番号
+    passWord = messages.StringField(8)                      #パスワード
+    
+    name = messages.StringField(9)                                       #店舗名
+    nameKana = messages.StringField(10)                                   #店舗名カナ
+    prefecturesCd2 = messages.IntegerField(11)                             #店舗所在地都道府県
+    streetAdd1 = messages.StringField(12)                                 #店舗所在地住所１
+    streetAdd2 = messages.StringField(13)                                 #店舗所在地住所２
+    lat = messages.StringField(14)                                        #店舗所在地緯度
+    lng = messages.StringField(15)                                        #店舗所在地軽度
+    stationCd = messages.IntegerField(16)                                 #最寄り駅
+    workingTime = messages.IntegerField(17)                               #駅徒歩
+    oneHourPoint = messages.IntegerField(18)                              #１時間利用ポイント
+    oneDayPoint = messages.IntegerField(19)                               #１日利用ポイント
+    conditions = messages.StringField(20)                                 #利用条件
+    cancelPer = messages.FloatField(21)                                   #キャンセル割合
+    holiday = messages.StringField(22,repeated=True)                      #定休日
+    hpUrl = messages.StringField(23)                                      #HP URL
+    openTime = messages.StringField(24)                                   #営業時間開始
+    closeTime = messages.StringField(25)                                  #営業時間終了
+    mirrorCnt = messages.IntegerField(26)                                 #利用可能席数
 
 class SalonAccountAddMsg(messages.Message):
     u"""サロンアカウント新規登録依頼メッセージ"""
-    account = messages.MessageField(AccountMsg, 1)      #アカウント情報
-    salon = messages.MessageField(SalonMsg, 2)          #サロン情報
+    salon = messages.MessageField(SalonAccountEditMsg, 1)          #サロン情報
 
 class SalonAccountAddResMsg(messages.Message):
     u"""サロンアカウント新規登録結果メッセージ"""
     res = messages.MessageField(ApiResponceMsg, 1)      #結果
-    kindId = messages.StringField(2)                    #KindID
+    accountId = messages.StringField(2)                 #アカウントID
+    kindId = messages.StringField(3)                    #KindID
+
+
+class SalonGetAccount4EditMsg(messages.Message):
+    accountId = messages.StringField(1)                         #アカウントId
+
+class SalonGetAccount4EditResMsg(messages.Message):
+    res = messages.MessageField(ApiResponceMsg, 1)                  #結果
+    salon = messages.MessageField(SalonAccountEditMsg, 2)     #アカウント情報
 
 
 class SalonAccountModifyMsg(messages.Message):
     u"""サロンアカウント修正依頼メッセージ"""
-    account = messages.MessageField(AccountMsg, 1)      #アカウント情報
-    salon = messages.MessageField(SalonMsg, 2)          #サロン情報
+    accountId = messages.StringField(1)                 #アカウントID
+    salon = messages.MessageField(SalonAccountEditMsg, 2)          #サロン情報
 
 class SalonAccountModifyResMsg(messages.Message):
     u"""サロンアカウント修正結果メッセージ"""
@@ -68,8 +77,8 @@ class SalonAccountModifyResMsg(messages.Message):
 
 class SalonProfileBasicModifyMsg(messages.Message):
     u"""サロンプロファイル修正依頼メッセージ"""
-    salonId = messages.StringField(AccountMsg, 1)       #アカウント情報
-    salon = messages.MessageField(SalonMsg, 2)          #サロン情報
+    salonId = messages.MessageField(AccountMsg, 1)       #アカウント情報
+    salon = messages.MessageField(SalonAccountEditMsg, 2)          #サロン情報
 
 class SalonProfileBasicModifyResMsg(messages.Message):
     u"""サロンプロファイル修正結果メッセージ"""

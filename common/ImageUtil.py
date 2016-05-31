@@ -11,7 +11,13 @@ class ImageUtil():
         
         resized = False
         
-        if img.width > img.height or img.height > maxH_:
+        if img.width > maxW_ or img.height > maxH_:
+            
+            if img.width > img.height:
+                maxH_ = 0
+            else:
+                maxW_ = 0
+                    
             img.resize(maxW_,maxH_)
             resized = True
                 
@@ -21,6 +27,22 @@ class ImageUtil():
         else:
             return imageData_
     
+    @classmethod
+    def crop(cls, imageData_, maxH_, maxW_):
+        
+        img = images.Image(imageData_)
+
+        if img.width > maxW_ or img.height > maxH_:
+        
+            if img.width > img.height:
+                maxH_ = 0
+            else:
+                maxW_ = 0
+                
+            img.resize(maxW_,maxH_)
+       
+        
+
     @classmethod
     def bolb2bse64(cls, imgData_):
         return base64.b64encode(imgData_)

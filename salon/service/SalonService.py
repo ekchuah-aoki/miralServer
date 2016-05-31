@@ -6,7 +6,7 @@ from common.msg.ApiResponceMsg import ApiResponceMsg
 from kind.AccountKind import AccountKind
 from code.LOGIN_TYPE import LOGIN_TYPE
 from code.OK_NG import OK_NG
-from code.UMU_FLG import UMU_FLG
+from code.ACCOUNT_TYPE import ACCOUNT_TYPE
 from common.MiralLogger import MiralLogger
 from common.msg.ApiResponceMsg import ApiResponceMsg
 from common.MiralMsgTbl import MiralMsgTbl
@@ -17,6 +17,9 @@ from common.service.AccountService import AccountMsg
 
 from salon.msg.SalonServiceMsg import SalonAccountAddResMsg 
 from salon.msg.SalonServiceMsg import SalonAccountModifyResMsg 
+from salon.msg.SalonServiceMsg import SalonAccountEditMsg 
+from salon.msg.SalonServiceMsg import SalonGetAccount4EditResMsg 
+
 class SalonService():
     u"""サロンサービス"""
     
@@ -24,24 +27,28 @@ class SalonService():
        
      
     def __covMsg2Knd(self, k_, m_):
+        logger = MiralLogger()
+        
         k_.name = m_.name                                                   #店舗名
         k_.nameKana = m_.nameKana                                           #店舗名カナ
-        k_.prefecturesCd = m_.prefecturesCd                                 #都道府県
+        k_.prefecturesCd = m_.prefecturesCd2                                #都道府県
         k_.streetAdd1 = m_.streetAdd1                                       #住所１
         k_.streetAdd2 = m_.streetAdd2                                       #住所２
         k_.stationCd = m_.stationCd                                         #最寄り駅
-        k_.workingTime = m_.messages.IntegerField()                         #駅徒歩
+        k_.workingTime = m_.workingTime                                     #駅徒歩
         
-        k_.geoCd = ndb.GeoPt(m_.lat + "," + m_.lon)                         #GEOコード      
+        if m_.lat:
+            k_.geoCd = ndb.GeoPt(m_.lat + "," + m_.lng)                         #GEOコード      
         
-        k_.compEval = m_.compEval                                           #総合評価
         k_.oneHourPoint = m_.oneHourPoint                                   #１時間利用ポイント
         k_.oneDayPoint = m_.oneDayPoint                                     #１日利用ポイント
          
         k_.conditions = m_.conditions                                       #利用条件    
 
-        k_.cancelPer = m_.cancelPer                                         #キャンセル割合            
+        k_.cancelPer = m_.cancelPer                                         #キャンセル割合
+        
         k_.holiday = m_.holiday                                             #定休日
+                
         k_.hpUrl = m_.hpUrl                                                 #HP URL
 
         k_.openTime = DateUtil.getTimeByStr(m_.openTime+"00")               #営業時間開始
@@ -50,6 +57,34 @@ class SalonService():
     def __covProfileBasicMsg2Knd(self, k_, m_):
         k_.remarks = m_.remarks                                             #備考
         k_.owrnerComme = m_.owrnerComme                                     #オーナーからの一言
+    
+    def __addAcount(self, reqMsg_):
+        
+        #サロン情報登録
+        salonKnd = SalonKind()
+        self.__covMsg2Knd(salonKnd,reqMsg_.salon)
+        salonKnd.put()
+        
+        #アカウント情報登録
+        accountKnd = AccountKind()
+        accountKnd.email = reqMsg_.salon.email                            #EMailアドレス
+        accountKnd.acType = ACCOUNT_TYPE.salon.getCode()                          #アカウント種別
+         
+        accountKnd.lastName = reqMsg_.salon.lastName                      #氏名(苗字)
+        accountKnd.firstName = reqMsg_.salon.firstName                    #氏名(名前)
+        accountKnd.lastNameKana = reqMsg_.salon.lastNameKana              #氏名カナ(苗字)
+        accountKnd.firstNameKana = reqMsg_.salon.firstNameKana            #氏名カナ(名前)
+        accountKnd.prefecturesCd = reqMsg_.salon.prefecturesCd1            #都道府県
+        accountKnd.tell = reqMsg_.salon.tell                              #電話番号
+        accountKnd.passWord = reqMsg_.salon.passWord                      #パスワード
+        
+        accountKnd.temporary = False                     #仮登録フラグ
+        
+        accountKnd.salonKey = salonKnd.key
+        
+        accountKnd.put()
+        
+        return accountKnd
     
     def add(self, salonAccountAddMsg_):
         u"""サロンアカウント新規登録"""
@@ -60,36 +95,54 @@ class SalonService():
         resMsg = SalonAccountAddResMsg()
         
         #アカウント（Email)の存在チェック
-        if accountService.isEmailExists(salonAccountAddMsg_.account.email):
+        if accountService.isEmailExists(salonAccountAddMsg_.salon.email):
             resMsg.res = ApiResponceMsg(rstCode=OK_NG.ng.getCode())
             return resMsg
         
-        
-        #サロン情報登録
-        salonKnd = SalonKind()
-
-        self.__covMsg2Knd(salonKnd,salonAccountAddMsg_.salon)
-        salonKnd.put()
-        
-        #アカウント情報登録
-        accountService = AccountService()
-        accountService.add(salonAccountAddMsg_.account, salonKnd.key)
+        accountKnd = self.__addAcount(salonAccountAddMsg_)
         
         resMsg.res = ApiResponceMsg(rstCode=OK_NG.ok.getCode())
-        logger.debug("--------- SalonService add!"+str(salonKnd.key.id()))
-        resMsg.kindId = str(salonKnd.key.id())
+        logger.debug("--------- SalonService add!"+str(accountKnd.salonKey.id()))
+        resMsg.accountId = str(accountKnd.key.id())
+        resMsg.kindId = str(accountKnd.salonKey.id())
 
         return resMsg    
+
+
+    def __modiyAccount(self, reqMsg_):
+        #アカウント情報
+        accountKey = ndb.Key(AccountKind, long(reqMsg_.accountId))
+        accountKnd = accountKey.get()
+
+        accountKnd.email = reqMsg_.salon.email                            #EMailアドレス
+         
+        accountKnd.lastName = reqMsg_.salon.lastName                      #氏名(苗字)
+        accountKnd.firstName = reqMsg_.salon.firstName                    #氏名(名前)
+        accountKnd.lastNameKana = reqMsg_.salon.lastNameKana              #氏名カナ(苗字)
+        accountKnd.firstNameKana = reqMsg_.salon.firstNameKana            #氏名カナ(名前)
+        accountKnd.prefecturesCd = reqMsg_.salon.prefecturesCd2           #都道府県
+        accountKnd.tell = reqMsg_.salon.tell                              #電話番号
+        
+        if reqMsg_.beauti.passWord:
+            accountKnd.passWord = reqMsg_.salon.passWord
+
+        accountKnd.put()
+
+        salonKnd = accountKnd.salonKey.get()
+        
+        self.__covMsg2Knd(salonKnd,reqMsg_.salon)
+        salonKnd.put()
+
+        
 
     def modify(self, salonAccountModifyMsg_):
         u"""サロンアカウント情報変更"""
         
         logger = MiralLogger()
         
-        accountService = AccountService()
         resMsg = SalonAccountModifyResMsg()
         
-        salonKey = self._add(salonAccountModifyMsg_)
+        self.__modiyAccount(salonAccountModifyMsg_)
         
         resMsg.res = ApiResponceMsg(rstCode=OK_NG.ok.getCode())
         logger.debug("--------- SalonService modify!")
@@ -109,3 +162,56 @@ class SalonService():
 
         salonKind.put()
 
+    def getAccount4Edit(self, reqMsg_):
+        logger = MiralLogger()
+        logger.debug("--------- SalonService getAccount4Edit start!")        
+        
+        salonMsg = SalonAccountEditMsg()
+
+        accountKey = ndb.Key(AccountKind, long(reqMsg_.accountId))
+        accountKnd = accountKey.get()
+
+        #アカウント共通情報
+        salonMsg.email = accountKnd.email                            #EMailアドレス
+        salonMsg.lastName = accountKnd.lastName                      #氏名(苗字)
+        salonMsg.firstName = accountKnd.firstName                    #氏名(名前)
+        salonMsg.lastNameKana = accountKnd.lastNameKana              #氏名カナ(苗字)
+        salonMsg.firstNameKana = accountKnd.firstNameKana            #氏名カナ(名前)
+        salonMsg.prefecturesCd1 = accountKnd.prefecturesCd           #都道府県
+        salonMsg.tell = accountKnd.tell                              #電話番号
+        
+        salonKnd = accountKnd.salonKey.get()
+
+        #アカウントサロン情報
+        salonMsg.name = salonKnd.name                                #店舗名カナ
+        salonMsg.nameKana = salonKnd.nameKana                        #店舗名カナ
+        salonMsg.prefecturesCd2 = salonKnd.prefecturesCd             #店舗所在地都道府県
+        salonMsg.streetAdd1 =salonKnd.streetAdd1                     #店舗所在地住所１
+        salonMsg.streetAdd2 = salonKnd.streetAdd2                    #店舗所在地住所２
+        
+        if salonKnd.geoCd: 
+            salonMsg.lat = str(salonKnd.geoCd.lat)                       #店舗所在地緯度
+            salonMsg.lng = str(salonKnd.geoCd.lon)                       #店舗所在地軽度
+            
+        salonMsg.stationCd = salonKnd.stationCd                      #最寄り駅
+        salonMsg.workingTime = salonKnd.workingTime                  #駅徒歩
+        salonMsg.oneHourPoint = salonKnd.oneHourPoint                #１時間利用ポイント
+        salonMsg.oneDayPoint = salonKnd.oneDayPoint                  #１日利用ポイント
+        salonMsg.conditions = salonKnd.conditions                    #利用条件
+        salonMsg.cancelPer = salonKnd.cancelPer                      #キャンセル割合
+        salonMsg.holiday = salonKnd.holiday                          #定休日
+        salonMsg.hpUrl = salonKnd.hpUrl                              #HP URL
+        
+        openTime = DateUtil.splitStrTime(salonKnd.openTime)
+        salonMsg.openTime = openTime["hour"]+openTime["minute"]            #営業時間開始
+
+        closeTime = DateUtil.splitStrTime(salonKnd.closeTime)
+        salonMsg.closeTime = closeTime["hour"]+closeTime["minute"]         #営業時間終了
+        salonMsg.mirrorCnt = salonKnd.mirrorCnt                      #利用可能席数
+        
+        resMsg = SalonGetAccount4EditResMsg()
+        resMsg.salon = salonMsg
+        resMsg.res = ApiResponceMsg(rstCode=OK_NG.ng.getCode())
+        
+        return resMsg
+    

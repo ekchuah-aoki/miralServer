@@ -13,13 +13,16 @@ from protorpc import remote
 #アカウント関係
 from common.msg.AccountServiceMsg import AccountGetMsg
 from common.msg.AccountServiceMsg import AccountGetResMsg
+from common.msg.AccountServiceMsg import AccountGetLoginMsg
+from common.msg.AccountServiceMsg import AccountGetLoginResMsg
+
 from common.service.AccountService import AccountService
 
 #美容師関係
 from beauti.service.BeauticianService import BeauticianService
 
-from beauti.msg.BeauticianServiceMsg import  BeautiTempAccountAddMsg
-from beauti.msg.BeauticianServiceMsg import  BeautiTempAccountAddResMsg
+from beauti.msg.BeauticianServiceMsg import BeautiTempAccountAddMsg
+from beauti.msg.BeauticianServiceMsg import BeautiTempAccountAddResMsg
 from beauti.msg.BeauticianServiceMsg import BeautiTempAccountAddResMsg
 from beauti.msg.BeauticianServiceMsg import BeauticianAccountEditMsg
 from beauti.msg.BeauticianServiceMsg import BeauticianGetAccountMsg
@@ -29,8 +32,6 @@ from beauti.msg.BeauticianServiceMsg import  BeautiAccountAddMsg
 from beauti.msg.BeauticianServiceMsg import  BeautiAccountAddResMsg
 from beauti.msg.BeauticianServiceMsg import  BeauticianModityAccountMsg
 from beauti.msg.BeauticianServiceMsg import  BeauticianModityAccountResMsg
-from beauti.msg.BeauticianServiceMsg import  BeautiGetAccountInfoMsg
-from beauti.msg.BeauticianServiceMsg import  BeautiGetAccountInfoResMsg
 
 
 #美容師免許関連
@@ -40,6 +41,15 @@ from beauti.msg.LicenseServiceMsg import LicenseAddMsg
 from beauti.msg.LicenseServiceMsg import LicenseAddResMsg
 from beauti.msg.LicenseServiceMsg import LicenseGetThumbnailImgMsg
 from beauti.msg.LicenseServiceMsg  import LicenseGetThumbnailImgResMsg
+
+#サロン関係
+from salon.service.SalonService import SalonService
+from salon.msg.SalonServiceMsg import SalonAccountAddMsg
+from salon.msg.SalonServiceMsg import SalonAccountAddResMsg
+from salon.msg.SalonServiceMsg import SalonAccountModifyMsg
+from salon.msg.SalonServiceMsg import SalonAccountModifyResMsg
+from salon.msg.SalonServiceMsg import SalonGetAccount4EditMsg
+from salon.msg.SalonServiceMsg import SalonGetAccount4EditResMsg
 
 
 #イメージ共通処理関係
@@ -51,6 +61,8 @@ from common.service.ImageService import ImageGetResMsg
 from common.service.TrainMastrService import TrainRouteService
 from common.msg.TrainMasterMsg import TrainMasterGetTrainListResMsg 
 from common.msg.TrainMasterMsg import TrainMasterGetTrainListMsg 
+from common.msg.TrainMasterMsg import TrainMasterSrhStationListResMsg 
+from common.msg.TrainMasterMsg import TrainMasterSrhStationListMsg 
 
 from common.MiralLogger import MiralLogger
 
@@ -84,6 +96,20 @@ class MiralServerApi(remote.Service):
         service = AccountService();
         return service.get(request.loginType, request.id)
 
+    #ログイン
+    @endpoints.method(AccountGetLoginMsg, AccountGetLoginResMsg,
+                     path='coomon/accountservice/getlogin', http_method='POST',
+                     name='common.accountservice.getlogin')
+
+    def common_accountservice_getlogin(self, request): 
+        u"""アカウント情報の取得"""
+        
+        logger = MiralLogger()
+        
+        logger.debug(u"★"+"loginType:"+str(request.loginType)+ " id:"+request.id)
+        
+        service = AccountService();
+        return service.getLogin(request.loginType, request.id)
 
 
     ########################################
@@ -116,6 +142,20 @@ class MiralServerApi(remote.Service):
         
         service = BeauticianService();
         return service.getAccount4Edit(request)
+    
+    #アカウント新規登録
+    @endpoints.method(BeautiAccountAddMsg, BeautiAccountAddResMsg,
+                     path='beauti/beauticianservice/add', http_method='POST',
+                     name='beauti.beauticianservice.add')
+
+    def beauti_beauticianservice_add(self, request): 
+        u"""美容師アカウント情報の登録"""
+        logger = MiralLogger()
+        
+        logger.debug(u"★beauti_beauticianservice_add")
+        
+        service = BeauticianService();
+        return service.add(request)
     
     #アカウント情報変更
     @endpoints.method(BeauticianModityAccountMsg, BeauticianModityAccountResMsg,
@@ -164,44 +204,92 @@ class MiralServerApi(remote.Service):
         return service.getThumbnailImage(request.beautiId)
 
     
+    ########################################
+    #サロン関連
+    
+    #アカウント新規登録
+    @endpoints.method(SalonAccountAddMsg, SalonAccountAddResMsg,
+                     path='salon/salonservice/add', http_method='POST',
+                     name='salon.salonservice.add')
+
+    def salon_salonservice_add(self, request): 
+        u"""サロンアカウント情報の登録"""
+        
+        logger = MiralLogger()
+        
+        logger.debug(u"★salon_salonservice_add")
+        
+        service = SalonService()
+        return service.add(request)
+
+    #アカウント修正
+    @endpoints.method(SalonAccountModifyMsg, SalonAccountModifyResMsg,
+                     path='salon/salonservice/modify', http_method='POST',
+                     name='salon.salonservice.modify')
+
+    def salon_salonservice_modify(self, request): 
+        u"""サロンアカウント情報の登録"""
+        
+        logger = MiralLogger()
+        
+        logger.debug(u"★salon_salonservice_add")
+        
+        service = SalonService()
+        return service.modify(request)
+
+    #アカウント情報取得
+    @endpoints.method(SalonGetAccount4EditMsg, SalonGetAccount4EditResMsg,
+                     path='salon/salonservice/getaccount4edit', http_method='POST',
+                     name='salon.salonservice.getaccount4edit')
+
+    def salon_salonservice_getaccount4edit(self, request): 
+        u"""サロンアカウント情報の登録"""
+        
+        logger = MiralLogger()
+        
+        logger.debug(u"★salon_salonservice_getaccount4edit")
+        
+        service = SalonService()
+        return service.getAccount4Edit(request)
+
+
     
     ########################################
     #マスタ関係
-    
-    
     @endpoints.method(TrainMasterGetTrainListMsg, TrainMasterGetTrainListResMsg,
                      path='common/trainmasterservice/gettrainlist', http_method='POST',
                      name='common.trainmasterservice.gettrainlist')
 
+    #マスタ関係
     def common_trainmasterservice_gettrainlist(self, request): 
         u"""沿線リスト取得"""
         logger = MiralLogger()
         
         logger.debug(u"★common_trainmasterservice_gettrainlist")
         
-        service = TrainRouteService();
+        service = TrainRouteService()
         return service.getTrainList(request)
     
-    ###################################################################
-    ###################################################################
-    ###################################################################
-    ###################################################################
-    
-    
-    @endpoints.method(BeautiAccountAddMsg, BeautiAccountAddResMsg,
-                     path='beauti/beauticianservice/add', http_method='POST',
-                     name='beauti.beauticianservice.add')
+    @endpoints.method(TrainMasterSrhStationListMsg, TrainMasterSrhStationListResMsg,
+                     path='common/trainmasterservice/srhstationlist', http_method='POST',
+                     name='common.trainmasterservice.srhstationlist')
 
-    def beauti_beauticianservice_add(self, request): 
-        u"""美容師アカウント情報の登録"""
+    def common_trainmasterservice_srhstationlist(self, request): 
+        u"""駅リスト取得"""
         logger = MiralLogger()
         
-        logger.debug(u"★beauti_beauticianservice_add")
+        logger.debug(u"★common_trainmasterservice_srhstationlist")
         
-        service = BeauticianService();
-        return service.add(request)
-
-
+        service = TrainRouteService()
+        return service.srhStationList(request.keyword)
+    
+    
+    ###################################################################
+    ###################################################################
+    ###################################################################
+    ###################################################################
+    
+    
     
 
     ########################################

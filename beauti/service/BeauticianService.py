@@ -26,14 +26,11 @@ from beauti.msg.BeauticianServiceMsg import BeauticianGetAccountMsg
 from beauti.msg.BeauticianServiceMsg import BeauticianGetAccount4EditResMsg
 from beauti.msg.BeauticianServiceMsg import BeauticianModityAccountResMsg
 
-from beauti.msg.BeauticianServiceMsg import BeauticianMsg
 from beauti.msg.BeauticianServiceMsg import  BeauticianOtherMsg 
 from beauti.msg.BeauticianServiceMsg import  BeautiAccountAddMsg
 from beauti.msg.BeauticianServiceMsg import  BeautiAccountAddResMsg
 from beauti.msg.BeauticianServiceMsg import  BeautiAccountModifyMsg
 from beauti.msg.BeauticianServiceMsg import  BeautiAccountModifyResMsg
-from beauti.msg.BeauticianServiceMsg import  BeautiGetAccountInfoMsg
-from beauti.msg.BeauticianServiceMsg import  BeautiGetAccountInfoResMsg
  
 class BeauticianService():
 
@@ -58,8 +55,6 @@ class BeauticianService():
         accountKnd.firstName = tempAddMsg_.firstName                    #氏名(名前)
         accountKnd.lastNameKana = tempAddMsg_.lastNameKana              #氏名カナ(苗字)
         accountKnd.firstNameKana = tempAddMsg_.firstNameKana            #氏名カナ(名前)
-        accountKnd.prefecturesCd = tempAddMsg_.prefecturesCd            #都道府県
-        accountKnd.tell = tempAddMsg_.tell                              #電話番号
         
         accountKnd.temporary = True                                     #仮登録フラグ
          
@@ -96,7 +91,6 @@ class BeauticianService():
         logger = MiralLogger()
         logger.debug("--------- BeauticianService getAccount4Edit start!")        
         
-        logger.debug(ACCOUNT_TYPE.test())
         
         accMsg = BeauticianAccountEditMsg()                 
         accountKey = ndb.Key(AccountKind, long(reqMsg_.accountId))
@@ -134,7 +128,6 @@ class BeauticianService():
         logger = MiralLogger()
         logger.debug("__modifyAccount")
 
-        logger.debug("lastNameKana:"+reqMsg_.beauti.lastNameKana)
 
         #アカウント情報
         accountKey = ndb.Key(AccountKind, long(reqMsg_.accountId))
@@ -209,25 +202,44 @@ class BeauticianService():
         
         return beautiKey.get()    
         
-    def getAccountInfo(self, beautiGetAccountInfoMsg_):
         
-        accountService = AccountService()
-        resMsg = BeautiGetAccountInfoResMsg()
-        
-        #アカウント情報
-        accountKind =  accountService.getKind()
-        accountService.covKnd2Msg(accountKind, resMsg.account)
+    @ndb.transactional(xg=True)    
+    def __addAccount(self, reqMsg_):
+        #美容師情報登録
+        beautiKnd = BeauticianKind()
 
+        self.__covMsg2Knd(beautiKnd, reqMsg_)
+        beautiKnd.put()
+
+        #アカウント情報登録
+        accountKnd = AccountKind()
+        accountKnd.email = reqMsg_.beautician.email                            #EMailアドレス
+        accountKnd.acType = ACCOUNT_TYPE.beauti.getCode()                       #アカウント種別
+        #accountKnd.facebookId = reqMsg_.facebookId                              #FacebookID
+        #accountKnd.facebookToke = reqMsg_.facebookToke                          #FacebookToken
+        #accountKnd.twitterId = reqMsg_.twitterId                                #TwitterId   
+        #accountKnd.twitterToken = reqMsg_.twitterToken                          #TwitterToken  
+        #accountKnd.googleplusId = reqMsg_.beautician.googleplusId              #googleId   
+        #accountKnd.googleplusToken = reqMsg_.beautician.googleplusToken        #googleToken      
+        #accountKnd.instagramId = reqMsg_.beautician.instagramId                #instagramId   
+        #accountKnd.instagramToken = reqMsg_.beautician.instagramToken          #instagramToken
+         
+        accountKnd.lastName = reqMsg_.beautician.lastName                       #氏名(苗字)
+        accountKnd.firstName = reqMsg_.beautician.firstName                     #氏名(名前)
+        accountKnd.lastNameKana = reqMsg_.beautician.lastNameKana               #氏名カナ(苗字)
+        accountKnd.firstNameKana = reqMsg_.beautician.firstNameKana             #氏名カナ(名前)
+        accountKnd.prefecturesCd = reqMsg_.beautician.prefecturesCd             #都道府県
+        accountKnd.tell = reqMsg_.beautician.tell                               #電話番号
+        accountKnd.passWord = reqMsg_.beautician.passWord                       #パスワード
         
-        #美容師情報
+        accountKnd.temporary = False                                            #仮登録フラグ
         
+        accountKnd.beautiKey = beautiKnd.key
         
+        accountKnd.put()
         
-        resMsg.res = ApiResponceMsg(rstCode=OK_NG.ok.getCode())
-        return resMsg
-        
-        
-        
+        return accountKnd
+ 
         
     def add(self, accountBeautiAddMsg_):
         u"""美容師新規登録"""
@@ -238,28 +250,18 @@ class BeauticianService():
         resMsg = BeautiAccountAddResMsg()
         
         #アカウント（Email)の存在チェック
-        if accountService.isEmailExists(accountBeautiAddMsg_.account.email):
+        if accountService.isEmailExists(accountBeautiAddMsg_.beautician.email):
             resMsg.res = ApiResponceMsg(rstCode=OK_NG.ng.getCode())
             return resMsg
 
-        #美容師情報登録
-        beautiKnd = BeauticianKind()
-
-        self.__covMsg2Knd(beautiKnd, accountBeautiAddMsg_)
-        beautiKnd.put()
-
-        #アカウント情報登録
-        accountService = AccountService()
-        accountService.add(accountBeautiAddMsg_.account, beautiKnd.key)
-        
-        beautiKey = beautiKnd.key
        
-        
+        accountKnd = self.__addAccount(accountBeautiAddMsg_)
         
         
         resMsg.res = ApiResponceMsg(rstCode=OK_NG.ok.getCode())
-        logger.debug("--------- BeauticianService add!"+str(beautiKey.id()))
-        resMsg.accountId = str(beautiKey.id())
+        logger.debug("--------- BeauticianService add!"+str(accountKnd.beautiKey.id()))
+        resMsg.accountId = str(accountKnd.key.id())
+        resMsg.kindId = str(accountKnd.beautiKey.id())
 
         return resMsg    
     

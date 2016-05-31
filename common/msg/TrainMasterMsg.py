@@ -16,3 +16,20 @@ class TrainMasterGetTrainListResMsg(messages.Message):
     u"""路線リスト取得結果メッセージ"""
     res = messages.MessageField(ApiResponceMsg, 1)
     trains = messages.MessageField(TrainListItemMsg, 2, repeated=True)
+
+
+class StationListItemMsg(messages.Message):
+    u"""駅リストメッセージ"""
+    stationCd   = messages.StringField(1)                     #駅コード
+    trainName   = messages.StringField(2)                     #路線名
+    stationName   = messages.StringField(3)                   #駅名
+
+
+class TrainMasterSrhStationListMsg(messages.Message):
+    u"""駅リスト取得依頼メッセージ"""
+    keyword = messages.StringField(1)              #検索ワード
+                  
+class TrainMasterSrhStationListResMsg(messages.Message):
+    u"""駅リスト取得結果メッセージ"""
+    res = messages.MessageField(ApiResponceMsg, 1)
+    stations = messages.MessageField(StationListItemMsg, 2, repeated=True)

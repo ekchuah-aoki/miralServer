@@ -22,13 +22,12 @@ class SalonKind(BaseKind):
     oneDayPoint = ndb.IntegerProperty(default=0)                      #１日利用ポイント
     conditions = ndb.TextProperty()                                   #利用条件
     cancelPer = ndb.FloatProperty()                                   #キャンセル割合
-    holiday = ndb.StringProperty()                                    #定休日
+    holiday = ndb.StringProperty(repeated=True)                                    #定休日
     hpUrl = ndb.StringProperty()                                      #HP URL
     email = ndb.StringProperty()                                      #連絡用Emailアドレス
     parkingCd = ndb.IntegerProperty()                                 #駐車場利用区分
     parkingRem = ndb.StringProperty()                                 #駐車場備考
     remarks = ndb.TextProperty()                                      #備考
-    #ownerImageKey = ndb.KeyProperty(kind=ImageKind)                   #オーナー画像Key
     ownerThImageKey = ndb.KeyProperty(kind=ImageKind)                 #オーナーサムネイル画像Key
     owrnerComme = ndb.TextProperty()                                  #オーナーからの一言
     openTime = ndb.TimeProperty()                                     #営業時間開始

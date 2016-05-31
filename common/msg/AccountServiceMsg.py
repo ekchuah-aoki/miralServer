@@ -48,4 +48,23 @@ class AccountGetResMsg(messages.Message):
     res = messages.MessageField(ApiResponceMsg, 1)      #結果
     account = messages.MessageField(AccountMsg, 2)      #アカウント情報
 
+
+class AccountGetLoginMsg(messages.Message):
+    u"""アカウント取得依頼メッセージ"""
+    loginType = messages.IntegerField(1)           #ログインタイプ
+    id = messages.StringField(2)                   #識別ID
+    pwd = messages.StringField(3)                  #パスワード（E-mailの場合のみ)
+
+class AccountGetLoginResMsg(messages.Message):
+    u"""アカウント取得結果メッセージ"""
+    res = messages.MessageField(ApiResponceMsg, 1)      #結果
+    accountId  = messages.StringField(2)                               #アカウントId
+    kindId = messages.StringField(3)                                   #容師の場合は美容師KindのId、サロンの場合はサロンのKindのId 
+
+    email = messages.StringField(4)                                       #EMailアドレス
+    acType = messages.IntegerField(5)                                     #アカウント種別
+    lastName = messages.StringField(6)                                    #氏名(苗字)
+    firstName = messages.StringField(7)                                   #氏名(名前)
+    temporary = messages.BooleanField(8)                                 #仮登録中  
+
             

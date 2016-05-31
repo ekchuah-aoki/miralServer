@@ -70,11 +70,11 @@ class LicenseService():
             
         if not base64Data:
             resMsg.res = ApiResponceMsg(rstCode=UMU_FLG.nasi.getCode())
-            
         else:
             resMsg.res = ApiResponceMsg(rstCode=UMU_FLG.ari.getCode())
             resMsg.imgbase64data = base64Data
-            return resMsg
+
+        return resMsg
 
         
         
