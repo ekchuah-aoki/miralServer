@@ -6,6 +6,7 @@ from kind.ImageKind import ImageKind
 from kind.SalonGalleryKind import SalonGalleryKind
 from kind.SalonFacilityKind import SalonFacilityKind
 from kind.SalonExpendableKind import SalonExpendableKind
+from kind.master.MstStationKind import MstStationKind
 
 class SalonKind(BaseKind):
     u"""サロン情報"""
@@ -14,7 +15,7 @@ class SalonKind(BaseKind):
     prefecturesCd = ndb.IntegerProperty()                             #都道府県
     streetAdd1 = ndb.StringProperty()                                 #住所１
     streetAdd2 = ndb.StringProperty()                                 #住所２
-    stationCd = ndb.IntegerProperty()                                 #最寄り駅
+    stationKey = ndb.KeyProperty(kind=MstStationKind)                                 #最寄り駅
     workingTime = ndb.IntegerProperty()                               #駅徒歩
     geoCd = ndb.GeoPtProperty()                                       #緯度：軽度
     compEval = ndb.FloatProperty(default=0)                           #総合評価
@@ -36,6 +37,7 @@ class SalonKind(BaseKind):
     srhCondIowestRat = ndb.FloatProperty()                            #美容師検索対象最低総合評価
     mirrorCnt = ndb.IntegerProperty()                                 #利用可能席数
 
+    mainImageKey = ndb.KeyProperty(kind=ImageKind)  
     galleryKey = ndb.KeyProperty(kind=SalonGalleryKind)  
     facilityKey = ndb.KeyProperty(kind=SalonFacilityKind)  
     expendableKey = ndb.KeyProperty(kind=SalonExpendableKind)  

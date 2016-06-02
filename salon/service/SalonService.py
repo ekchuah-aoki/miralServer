@@ -20,21 +20,22 @@ from salon.msg.SalonServiceMsg import SalonAccountModifyResMsg
 from salon.msg.SalonServiceMsg import SalonAccountEditMsg 
 from salon.msg.SalonServiceMsg import SalonGetAccount4EditResMsg 
 
+from common.service.TrainMastrService import TrainRouteService
+
 class SalonService():
     u"""サロンサービス"""
     
-    @ndb.transactional(xg=True)    
-       
-     
-    def __covMsg2Knd(self, k_, m_):
+    def __covMsg2Knd(self, k_, m_, stationKey_):
         logger = MiralLogger()
+        
         
         k_.name = m_.name                                                   #店舗名
         k_.nameKana = m_.nameKana                                           #店舗名カナ
         k_.prefecturesCd = m_.prefecturesCd2                                #都道府県
         k_.streetAdd1 = m_.streetAdd1                                       #住所１
         k_.streetAdd2 = m_.streetAdd2                                       #住所２
-        k_.stationCd = m_.stationCd                                         #最寄り駅
+        #k_.stationKey = trainService.getStationKeyByCode(m_.stationCd)     #最寄り駅
+        k_.stationKey = stationKey_           #最寄り駅
         k_.workingTime = m_.workingTime                                     #駅徒歩
         
         if m_.lat:
@@ -58,11 +59,12 @@ class SalonService():
         k_.remarks = m_.remarks                                             #備考
         k_.owrnerComme = m_.owrnerComme                                     #オーナーからの一言
     
-    def __addAcount(self, reqMsg_):
+    @ndb.transactional(xg=True)
+    def __addAcount(self, reqMsg_, stationKey_):
         
         #サロン情報登録
         salonKnd = SalonKind()
-        self.__covMsg2Knd(salonKnd,reqMsg_.salon)
+        self.__covMsg2Knd(salonKnd,reqMsg_.salon, stationKey_)
         salonKnd.put()
         
         #アカウント情報登録
@@ -99,7 +101,10 @@ class SalonService():
             resMsg.res = ApiResponceMsg(rstCode=OK_NG.ng.getCode())
             return resMsg
         
-        accountKnd = self.__addAcount(salonAccountAddMsg_)
+        #TODO:今はテスト的に固定
+        trainService = TrainRouteService()
+        stationKey = trainService.getStationKeyByCode(1130314)        
+        accountKnd = self.__addAcount(salonAccountAddMsg_, stationKey)
         
         resMsg.res = ApiResponceMsg(rstCode=OK_NG.ok.getCode())
         logger.debug("--------- SalonService add!"+str(accountKnd.salonKey.id()))
@@ -108,8 +113,8 @@ class SalonService():
 
         return resMsg    
 
-
-    def __modiyAccount(self, reqMsg_):
+    @ndb.transactional(xg=True)
+    def __modiyAccount(self, reqMsg_, stationKey_):
         #アカウント情報
         accountKey = ndb.Key(AccountKind, long(reqMsg_.accountId))
         accountKnd = accountKey.get()
@@ -130,7 +135,8 @@ class SalonService():
 
         salonKnd = accountKnd.salonKey.get()
         
-        self.__covMsg2Knd(salonKnd,reqMsg_.salon)
+
+        self.__covMsg2Knd(salonKnd,reqMsg_.salon, stationKey_)
         salonKnd.put()
 
         
@@ -141,8 +147,11 @@ class SalonService():
         logger = MiralLogger()
         
         resMsg = SalonAccountModifyResMsg()
+
+        trainService = TrainRouteService()
+        stationKey = trainService.getStationKeyByCode(1130314)        
         
-        self.__modiyAccount(salonAccountModifyMsg_)
+        self.__modiyAccount(salonAccountModifyMsg_,stationKey)
         
         resMsg.res = ApiResponceMsg(rstCode=OK_NG.ok.getCode())
         logger.debug("--------- SalonService modify!")

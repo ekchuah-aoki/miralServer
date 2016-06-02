@@ -23,14 +23,14 @@ class SalonGalleyGetAllThumbnailMsg(messages.Message):
 
 class SalonGalleryAddImgMsg(messages.Message):
     u"""サロンアカウント新規登録結果メッセージ"""
-    kindId = messages.StringField(1)                    #KindID
-    order = messages.IntegerField(2)                    #順序
+    salonId = messages.StringField(1)                    #SalonKindID
     imgbase64data = messages.StringField(3)             #イメージデータ
 
 class SalonGalleryAddImgResMsg(messages.Message):
     u"""サロンアカウント新規登録結果メッセージ"""
     res = messages.MessageField(ApiResponceMsg, 1)      #結果
-    imgId = messages.StringField(2)                     #イメージID
+    imgId = messages.StringField(2)                     #イメージID(SalonGalleryKindId)
+    imgbase64data = messages.StringField(3)             #イメージデータ（サムネイル）
 
 
 

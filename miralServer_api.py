@@ -52,6 +52,17 @@ from salon.msg.SalonServiceMsg import SalonGetAccount4EditMsg
 from salon.msg.SalonServiceMsg import SalonGetAccount4EditResMsg
 
 
+#サロンクエリー関係
+from salon.service.SalonQueryService import SalonQueryService
+from salon.msg.SalonQueryServiceMsg import SalonSearchByKeywordMsg
+from salon.msg.SalonQueryServiceMsg import SalonSearchByKeywordResMsg
+
+#サロンギャラリー関係
+from salon.service.SalonGalleryService import SalonGalleryService
+from salon.msg.SalonGalleryServiceMsg import SalonGalleryAddImgMsg
+from salon.msg.SalonGalleryServiceMsg import SalonGalleryAddImgResMsg
+
+
 #イメージ共通処理関係
 from common.service.ImageService  import ImageService
 from common.service.ImageService import ImageGetMsg
@@ -203,6 +214,24 @@ class MiralServerApi(remote.Service):
         service = LicenseService();
         return service.getThumbnailImage(request.beautiId)
 
+    ########################################
+    #サロンクエリー関連
+    
+    #サロン検索
+    @endpoints.method(SalonSearchByKeywordMsg, SalonSearchByKeywordResMsg,
+                     path='salon/salonqueryservice/srhbykeyword', http_method='POST',
+                     name='salon.salonqueryservice.srhbykeyword')
+
+    def salon_salonqueryservice_srhbykeyword(self, request): 
+        u"""サロンアカウント情報の登録"""
+        
+        logger = MiralLogger()
+        
+        logger.debug(u"★salon_salonqueryservice_srhbykeyword")
+        
+        service = SalonQueryService()
+        return service.searchByKeyword(request)
+
     
     ########################################
     #サロン関連
@@ -251,6 +280,24 @@ class MiralServerApi(remote.Service):
         
         service = SalonService()
         return service.getAccount4Edit(request)
+
+    ########################################
+    #サロン ギャラリ関連
+    
+    #画像追加登録
+    @endpoints.method(SalonGalleryAddImgMsg, SalonGalleryAddImgResMsg,
+                     path='salon/salongalleryservice/add', http_method='POST',
+                     name='salon.salongalleryservice.add')
+
+    def salon_salongalleryservice_add(self, request): 
+        u"""サロンギャラリ画像追加登録"""
+        
+        logger = MiralLogger()
+        
+        logger.debug(u"★salon_salongalleryservice_add")
+        
+        service = SalonGalleryService()
+        return service.add(request.salonId, request.imgbase64data)
 
 
     

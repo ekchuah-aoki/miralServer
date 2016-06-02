@@ -6,7 +6,6 @@ from kind.ImageKind import ImageKind
 
 class SalonGalleryKind(BaseKind):
     u"""サロンプロフィール画像情報"""
-    displayOrder = ndb.IntegerProperty()                              #表示順
     imageKey = ndb.KeyProperty(kind=ImageKind)                        #画像Key
     thImageKey = ndb.KeyProperty(kind=ImageKind)                      #サムネイル画像Key
     caption = ndb.StringProperty()                                    #キャプション

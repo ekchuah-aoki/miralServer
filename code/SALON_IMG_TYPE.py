@@ -7,6 +7,7 @@ class SALON_IMG_TYPE(CodeBase):
     u"""サロン　画像タイプ"""
     gallery =CodeValue(1, "gal")                 #ギャラリー画像大
     gallery_thumbnail=CodeValue(2, "galt")       #ギャラリー画像サムネール
+    main_image=CodeValue(3, "main")              #メイン画像
     
     
     

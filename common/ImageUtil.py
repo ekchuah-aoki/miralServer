@@ -1,6 +1,8 @@
 # coding: UTF-8
 from google.appengine.api import images
 import base64
+import math
+from common.MiralLogger import MiralLogger
 
 class ImageUtil():
     u"""miral ユーティリティー"""
@@ -18,7 +20,7 @@ class ImageUtil():
             else:
                 maxW_ = 0
                     
-            img.resize(maxW_,maxH_)
+            img = images.resize(img, maxW_,maxH_)
             resized = True
                 
 
@@ -31,17 +33,10 @@ class ImageUtil():
     def crop(cls, imageData_, maxH_, maxW_):
         
         img = images.Image(imageData_)
-
-        if img.width > maxW_ or img.height > maxH_:
-        
-            if img.width > img.height:
-                maxH_ = 0
-            else:
-                maxW_ = 0
-                
-            img.resize(maxW_,maxH_)
-       
-        
+              
+        img.resize(maxW_,maxH_, True)
+         
+        return img.execute_transforms(output_encoding=images.JPEG)
 
     @classmethod
     def bolb2bse64(cls, imgData_):

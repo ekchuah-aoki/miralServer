@@ -15,10 +15,37 @@ from common.msg.TrainMasterMsg import TrainListItemMsg
 from common.msg.TrainMasterMsg import TrainMasterGetTrainListResMsg 
 from common.msg.TrainMasterMsg import StationListItemMsg 
 from common.msg.TrainMasterMsg import TrainMasterSrhStationListResMsg 
+from kind.master.MstStationKind import MstStationKind
     
 class TrainRouteService():
-    u"""沿線に関する処理"""
 
+    u"""沿線に関する処理"""
+    def getStationNameByKey(self, key_):
+        
+        stationKnd = key_.get()
+        trainKnd = stationKnd.trainKey.get()
+        
+        rst = {"trainName":trainKnd.trainName
+               ,"stationName":stationKnd.stationName}
+        
+        return rst
+        
+        
+    u"""沿線に関する処理"""
+    def getStationKeyByCode(self, code_):
+        
+        logger = MiralLogger()
+        
+        if not code_:
+            return None
+        
+        qry = MstStationKind.query(MstStationKind.stationCd==code_)
+        
+        key = qry.get(keys_only=True)
+        
+        #logger.debug("駅名取得："+key.id())
+        
+        return key
 
     def srhStationList(self, keyword_):
         logger = MiralLogger()
