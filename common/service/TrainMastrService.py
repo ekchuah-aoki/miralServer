@@ -20,6 +20,10 @@ from kind.master.MstStationKind import MstStationKind
 class TrainRouteService():
 
     u"""沿線に関する処理"""
+    
+    def srhStationKeyByName(self, name):
+        qry = MstStationKind.query()
+    
     def getStationNameByKey(self, key_):
         
         stationKnd = key_.get()

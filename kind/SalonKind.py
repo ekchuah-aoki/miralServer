@@ -15,7 +15,7 @@ class SalonKind(BaseKind):
     prefecturesCd = ndb.IntegerProperty()                             #都道府県
     streetAdd1 = ndb.StringProperty()                                 #住所１
     streetAdd2 = ndb.StringProperty()                                 #住所２
-    stationKey = ndb.KeyProperty(kind=MstStationKind)                                 #最寄り駅
+    stationKey = ndb.KeyProperty(kind=MstStationKind)                 #最寄り駅
     workingTime = ndb.IntegerProperty()                               #駅徒歩
     geoCd = ndb.GeoPtProperty()                                       #緯度：軽度
     compEval = ndb.FloatProperty(default=0)                           #総合評価
@@ -23,7 +23,7 @@ class SalonKind(BaseKind):
     oneDayPoint = ndb.IntegerProperty(default=0)                      #１日利用ポイント
     conditions = ndb.TextProperty()                                   #利用条件
     cancelPer = ndb.FloatProperty()                                   #キャンセル割合
-    holiday = ndb.StringProperty(repeated=True)                                    #定休日
+    holiday = ndb.StringProperty(repeated=True)                       #定休日
     hpUrl = ndb.StringProperty()                                      #HP URL
     email = ndb.StringProperty()                                      #連絡用Emailアドレス
     parkingCd = ndb.IntegerProperty()                                 #駐車場利用区分

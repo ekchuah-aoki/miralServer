@@ -7,7 +7,6 @@ import csv
 from common.ImageUtil import ImageUtil 
 from common.ImageStrage import ImageStrage
 
-
 from kind.master.MstTrainKind import MstTrainKind
 class imageSample1(webapp2.RequestHandler):
 

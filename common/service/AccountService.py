@@ -76,6 +76,8 @@ class AccountService():
         logger = MiralLogger()
 
         logger.debug('get loginType:' + str(loginType_) + ' id:' + id_)
+
+        resMsg = AccountGetLoginResMsg()
         
         if LOGIN_TYPE.facebook.getCode()==loginType_:
             acq = AccountKind.query(AccountKind.facebookId == id_)
@@ -95,7 +97,6 @@ class AccountService():
         accountKnd = acq.get()
 
 
-        resMsg = AccountGetLoginResMsg()
         
         if not accountKnd:
             logger.debug("loginType:"+str(loginType_) +" id:"+id_+u" は存在しません")
